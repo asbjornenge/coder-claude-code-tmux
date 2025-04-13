@@ -83,29 +83,27 @@ resource "coder_script" "claude_code" {
       coder exp mcp configure claude-code ${var.folder}
     fi
 
-    # Run with screen if enabled
-    if [ "${var.experiment_use_screen}" = "true" ]; then
-      echo "Running Claude Code in the background..."
-      
-      # Check if tmux is installed
-      if ! command_exists tmux; then
-        echo "Error: tmux is not installed. Please install tmux manually."
-        exit 1
-      fi
-
-      touch "$HOME/.claude-code.log"
-
-      # export LANG=en_US.UTF-8
-      # export LC_ALL=en_US.UTF-8
-      
-      tmux new -s claude-code claude --dangerously-skip-permissions "$CODER_MCP_CLAUDE_TASK_PROMPT"
-    else
-      # Check if claude is installed before running
-      if ! command_exists claude; then
-        echo "Error: Claude Code is not installed. Please enable install_claude_code or install it manually."
-        exit 1
-      fi
+    # Run Claude Code in a tmux session 
+    echo "Running Claude Code in the background..."
+    
+    # Check if tmux is installed
+    if ! command_exists tmux; then
+      echo "Error: tmux is not installed. Please install tmux manually."
+      exit 1
     fi
+
+    # Check if claude is installed before running
+    if ! command_exists claude; then
+      echo "Error: Claude Code is not installed. Please enable install_claude_code or install it manually."
+      exit 1
+    fi
+
+    touch "$HOME/.claude-code.log"
+
+    # export LANG=en_US.UTF-8
+    # export LC_ALL=en_US.UTF-8
+    
+    tmux new -s claude-code claude --dangerously-skip-permissions "$CODER_MCP_CLAUDE_TASK_PROMPT"
     EOT
   run_on_start = true
 }
@@ -118,7 +116,7 @@ resource "coder_app" "claude_code" {
     #!/bin/bash
     set -e
 
-    if screen -list | grep -q "claude-code"; then
+    if tmux ls | grep "claude-code"; then
       echo "Attaching to existing Claude Code session." | tee -a "$HOME/.claude-code.log"
       tmux attach -t claude-code
     else
