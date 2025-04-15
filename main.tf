@@ -213,7 +213,7 @@ resource "coder_script" "github_runner" {
 
     echo "Starting runner..."
 
-    #tmux new-session -d -s claude-code "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
+    tmux new-session -d -s github-runner -c "$RUNNER_DIR" "./run.sh"
     EOT
   run_on_start = true
 }
