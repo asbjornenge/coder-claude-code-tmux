@@ -60,6 +60,12 @@ variable "github_repo" {
   default     = ""
 }
 
+variable "github_owner" {
+  type        = string
+  description = "GitHub repo"
+  default     = ""
+}
+
 # Install and Initialize Claude Code
 resource "coder_script" "claude_code" {
   agent_id     = var.agent_id
