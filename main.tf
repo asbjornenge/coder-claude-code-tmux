@@ -210,7 +210,7 @@ resource "coder_script" "github_runner" {
     fi
 
     echo "Starting runner..."
-    tmux new-session -d -s github-runner -c "$RUNNER_DIR" "./run.sh"
+    tmux new-session -d -s github-runner -c $RUNNER_DIR "./run.sh"
     EOT
   run_on_start = true
 }
