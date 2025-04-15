@@ -149,20 +149,20 @@ resource "coder_script" "github_runner" {
 
       echo "Acquiring ephemeral runner token..."
       REG_TOKEN=$(curl -sX POST \
-          -H "Authorization: token ${GITHUB_PAT}" \
+          -H "Authorization: token $GITHUB_PAT" \
           -H "Accept: application/vnd.github.v3+json" \
-          "${TOKEN_ENDPOINT}" | jq -r .token)
+          "$TOKEN_ENDPOINT" | jq -r .token)
 
       if [[ -z "$REG_TOKEN" || "$REG_TOKEN" == "null" ]]; then
         echo "ERROR: Could not fetch runner token. Check your PAT scopes, owner/repo, or network."
         exit 1
       fi
 
-      echo "$REG_TOKEN" > "${TOKEN_FILE}"
-      echo "Registration token saved to ${TOKEN_FILE}"
+      echo "$REG_TOKEN" > "$TOKEN_FILE"
+      echo "Registration token saved to $TOKEN_FILE"
 
       # Write remove.sh
-      cat > "${RUNNER_DIR}/remove.sh" <<EOF
+      cat > "$RUNNER_DIR/remove.sh" <<EOF
     #!/usr/bin/env bash
     set -e
 
@@ -179,7 +179,7 @@ resource "coder_script" "github_runner" {
       exit 1
     fi
     EOF
-      chmod +x "${RUNNER_DIR}/remove.sh"
+      chmod +x "$RUNNER_DIR/remove.sh"
 
       echo "Fetching latest GitHub Actions runner..."
       LATEST_URL=$(curl -s https://api.github.com/repos/actions/runner/releases/latest \
@@ -193,11 +193,11 @@ resource "coder_script" "github_runner" {
 
       echo "Configuring the runner with labels: self-hosted,coder,workspace,clubhut..."
       ./config.sh \
-        --url "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" \
-        --token "${REG_TOKEN}" \
-        --name "${RUNNER_NAME}" \
+        --url "https://github.com/$GITHUB_OWNER/$GITHUB_REPO" \
+        --token "$REG_TOKEN" \
+        --name "$RUNNER_NAME" \
         --work "_work" \
-        --labels "self-hosted,coder,workspace,${GITHUB_REPO}" \
+        --labels "self-hosted,coder,workspace,$GITHUB_REPO" \
         --unattended \
         --replace
     else
