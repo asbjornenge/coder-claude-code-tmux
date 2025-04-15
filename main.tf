@@ -121,35 +121,36 @@ resource "coder_script" "github_runner" {
     RUNNER_DIR="./actions-runner"
 
     # Token file path
-    TOKEN_FILE="${RUNNER_DIR}/registration_token.txt"
+    TOKEN_FILE="$RUNNER_DIR/registration_token.txt"
 
     # Set your environment variables here
-    GITHUB_OWNER="${GITHUB_OWNER:-my-org}"
-    GITHUB_REPO="${GITHUB_REPO:-my-repo}"
-    GITHUB_PAT="${GH_TOKEN:-YOUR_PAT_HERE}"
+    GITHUB_OWNER="${var.github_owner}"
+    GITHUB_REPO="${var.github_repo}"
+    GITHUB_PAT="${GH_TOKEN}"
     RUNNER_NAME="${RUNNER_NAME:-$(hostname)-runner}"
 
     # GitHub API token endpoint
-    TOKEN_ENDPOINT="https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/runners/registration-token"
+    TOKEN_ENDPOINT="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/actions/runners/registration-token"
+    # Replace the existing setup logic with this conditional block
+    if [ ! -d "$RUNNER_DIR" ]; then
+      mkdir -p "$RUNNER_DIR"
 
-    echo "Acquiring ephemeral runner token..."
-    REG_TOKEN=$(curl -sX POST \
-        -H "Authorization: token ${GITHUB_PAT}" \
-        -H "Accept: application/vnd.github.v3+json" \
-        "${TOKEN_ENDPOINT}" | jq -r .token)
+      echo "Acquiring ephemeral runner token..."
+      REG_TOKEN=$(curl -sX POST \
+          -H "Authorization: token ${GITHUB_PAT}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "${TOKEN_ENDPOINT}" | jq -r .token)
 
-    if [[ -z "$REG_TOKEN" || "$REG_TOKEN" == "null" ]]; then
-      echo "ERROR: Could not fetch runner token. Check your PAT scopes, owner/repo, or network."
-      exit 1
-    fi
+      if [[ -z "$REG_TOKEN" || "$REG_TOKEN" == "null" ]]; then
+        echo "ERROR: Could not fetch runner token. Check your PAT scopes, owner/repo, or network."
+        exit 1
+      fi
 
-    # Create runner dir and save token
-    mkdir -p "$RUNNER_DIR"
-    echo "$REG_TOKEN" > "$TOKEN_FILE"
-    echo "Registration token saved to ${TOKEN_FILE}"
+      echo "$REG_TOKEN" > "${TOKEN_FILE}"
+      echo "Registration token saved to ${TOKEN_FILE}"
 
-    # Write remove.sh into the dir
-    cat > "${RUNNER_DIR}/remove.sh" <<EOF
+      # Write remove.sh
+      cat > "${RUNNER_DIR}/remove.sh" <<EOF
     #!/usr/bin/env bash
     set -e
 
@@ -166,27 +167,32 @@ resource "coder_script" "github_runner" {
       exit 1
     fi
     EOF
-    chmod +x "${RUNNER_DIR}/remove.sh"
+      chmod +x "${RUNNER_DIR}/remove.sh"
 
-    echo "Fetching latest GitHub Actions runner..."
-    LATEST_URL=$(curl -s https://api.github.com/repos/actions/runner/releases/latest \
-      | grep "browser_download_url" \
-      | grep "linux-x64" \
-      | cut -d '"' -f 4)
+      echo "Fetching latest GitHub Actions runner..."
+      LATEST_URL=$(curl -s https://api.github.com/repos/actions/runner/releases/latest \
+        | grep "browser_download_url" \
+        | grep "linux-x64" \
+        | cut -d '"' -f 4)
 
-    cd "$RUNNER_DIR"
-    curl -sL "$LATEST_URL" -o actions-runner.tar.gz
-    tar xzf actions-runner.tar.gz
+      cd "$RUNNER_DIR"
+      curl -sL "$LATEST_URL" -o actions-runner.tar.gz
+      tar xzf actions-runner.tar.gz
 
-    echo "Configuring the runner with labels: self-hosted,coder,workspace,clubhut..."
-    ./config.sh \
-      --url "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" \
-      --token "${REG_TOKEN}" \
-      --name "${RUNNER_NAME}" \
-      --work "_work" \
-      --labels "self-hosted,coder,workspace,clubhut" \
-      --unattended \
-      --replace
+      echo "Configuring the runner with labels: self-hosted,coder,workspace,clubhut..."
+      ./config.sh \
+        --url "https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" \
+        --token "${REG_TOKEN}" \
+        --name "${RUNNER_NAME}" \
+        --work "_work" \
+        --labels "self-hosted,coder,workspace,${GITHUB_REPO}" \
+        --unattended \
+        --replace
+    else
+      cd "$RUNNER_DIR"
+    fi
+
+    echo "Starting runner..."
 
     #tmux new-session -d -s claude-code "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
     EOT
