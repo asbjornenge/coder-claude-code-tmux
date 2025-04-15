@@ -66,6 +66,12 @@ variable "github_owner" {
   default     = ""
 }
 
+variable "github_token" {
+  type        = string
+  description = "GitHub repo"
+  default     = ""
+}
+
 # Install and Initialize Claude Code
 resource "coder_script" "claude_code" {
   agent_id     = var.agent_id
@@ -138,7 +144,7 @@ resource "coder_script" "github_runner" {
     # Set your environment variables here
     GITHUB_OWNER="${var.github_owner}"
     GITHUB_REPO="${var.github_repo}"
-    GITHUB_PAT="${GH_TOKEN}"
+    GITHUB_PAT="${var.github_token}"
     RUNNER_NAME="$RUNNER_NAME:-$(hostname)-runner"
 
     # GitHub API token endpoint
