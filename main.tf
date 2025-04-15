@@ -207,12 +207,9 @@ resource "coder_script" "github_runner" {
         --labels "self-hosted,coder,workspace,$GITHUB_REPO" \
         --unattended \
         --replace
-    else
-      cd "$RUNNER_DIR"
     fi
 
     echo "Starting runner..."
-
     tmux new-session -d -s github-runner -c "$RUNNER_DIR" "./run.sh"
     EOT
   run_on_start = true
