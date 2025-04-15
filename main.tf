@@ -54,6 +54,12 @@ variable "experiment_report_tasks" {
   default     = false
 }
 
+variable "github_repo" {
+  type        = string
+  description = "GitHub repo"
+  default     = ""
+}
+
 # Install and Initialize Claude Code
 resource "coder_script" "claude_code" {
   agent_id     = var.agent_id
