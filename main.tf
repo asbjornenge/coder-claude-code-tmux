@@ -127,7 +127,7 @@ resource "coder_script" "github_runner" {
     GITHUB_OWNER="${var.github_owner}"
     GITHUB_REPO="${var.github_repo}"
     GITHUB_PAT="${GH_TOKEN}"
-    RUNNER_NAME="${RUNNER_NAME:-$(hostname)-runner}"
+    RUNNER_NAME="$RUNNER_NAME:-$(hostname)-runner"
 
     # GitHub API token endpoint
     TOKEN_ENDPOINT="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/actions/runners/registration-token"
