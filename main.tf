@@ -161,6 +161,7 @@ resource "coder_script" "github_runner" {
 
       if [[ -z "$REG_TOKEN" || "$REG_TOKEN" == "null" ]]; then
         echo "ERROR: Could not fetch runner token. Check your PAT scopes, owner/repo, or network."
+        echo $TOKEN_ENDPOINT
         exit 1
       fi
 
