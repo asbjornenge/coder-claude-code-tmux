@@ -230,8 +230,8 @@ resource "coder_script" "playwright_install" {
   run_on_start = true
 }
 
-# Start Xvfb
-resource "coder_script" "xvfb_start" {
+# Start Xvfb & x11vnc (we are using Xvfc for playwright and x11vnc just for debugging it)
+resource "coder_script" "xvfb_x11vnc" {
   agent_id     = var.agent_id
   display_name = "Xvfb start"
   icon         = var.icon
@@ -240,20 +240,7 @@ resource "coder_script" "xvfb_start" {
     set -e
 
     tmux new-session -d -s xvfb "Xvfb :99 -ac -screen 0 1920x1080x24 -nolisten tcp"
-
-    EOT
-  run_on_start = true
-}
-
-# Start x11vnc
-resource "coder_script" "x11vnc_start" {
-  agent_id     = var.agent_id
-  display_name = "x11vnc start"
-  icon         = var.icon
-  script       = <<-EOT
-    #!/bin/bash
-    set -e
-
+    sleep 1
     tmux new-session -d -s x11vnc "x11vnc -display :99 -rfbport 5900 -listen 0.0.0.0 -N -forever -passwd secret -shared"
 
     EOT
