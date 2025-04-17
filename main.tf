@@ -136,7 +136,7 @@ resource "coder_script" "github_runner" {
     set -e
 
     # Directory where the runner will be installed
-    RUNNER_DIR="./actions-runner"
+    RUNNER_DIR="/home/coder/actions-runner"
 
     # Token file path
     TOKEN_FILE="$RUNNER_DIR/registration_token.txt"
