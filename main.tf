@@ -120,8 +120,13 @@ resource "coder_script" "claude_code" {
 
     # export LANG=en_US.UTF-8
     # export LC_ALL=en_US.UTF-8
-    
-    tmux new-session -d -s claude-code "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
+
+    # Clone the repo
+    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+    cd $HOME
+    git clone git@github.com:${var.github_owner}/${var.github_repo}.git
+
+    tmux new-session -d -s claude-code -c $HOME/${var.github_repo} "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
     EOT
   run_on_start = true
 }
