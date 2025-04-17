@@ -215,6 +215,51 @@ resource "coder_script" "github_runner" {
   run_on_start = true
 }
 
+# Install playwright 
+resource "coder_script" "playwright_install" {
+  agent_id     = var.agent_id
+  display_name = "Playwright install"
+  icon         = var.icon
+  script       = <<-EOT
+    #!/bin/bash
+    set -e
+
+    npx playwright install
+
+    EOT
+  run_on_start = true
+}
+
+# Start Xvfb
+resource "coder_script" "xvfb_start" {
+  agent_id     = var.agent_id
+  display_name = "Xvfb start"
+  icon         = var.icon
+  script       = <<-EOT
+    #!/bin/bash
+    set -e
+
+    tmux new-session -d -s xvfb "Xvfb :99 -ac -screen 0 1920x1080x24 -nolisten tcp"
+
+    EOT
+  run_on_start = true
+}
+
+# Start x11vnc
+resource "coder_script" "x11vnc_start" {
+  agent_id     = var.agent_id
+  display_name = "x11vnc start"
+  icon         = var.icon
+  script       = <<-EOT
+    #!/bin/bash
+    set -e
+
+    tmux new-session -d -s x11vnc "x11vnc -display :99 -rfbport 5900 -listen 0.0.0.0 -N -forever -passwd secret -shared"
+
+    EOT
+  run_on_start = true
+}
+
 resource "coder_app" "claude_code" {
   slug         = "claude-code"
   display_name = "Claude Code"
