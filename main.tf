@@ -129,10 +129,21 @@ resource "coder_script" "claude_code" {
 
     # Write custom claude.mc
     cat > "$HOME/CLAUDE.md" <<EOF
-      # GitHub communication
-      
-      * Use the gh cli tool
-      * Prefix any issue comments with three robot emojis
+    # GitHub communication
+    
+    * Use the gh cli tool
+    * Prefix any issue comments with three robot emojis
+    * You always work in feature branches
+
+    # Workflow
+
+    * Read the issue information
+    * Implement the task in a feature branch
+    * Add tests if you think it's useful and necessary
+    * Make sure all tests are passing (typically app and api folders have npm test scripts)
+    * Start services (typically docker compose)
+    * Use playwright to very the site with it's new feature is working
+    * Report back to the issue
     EOF
 
     # Start the claude tmux session
