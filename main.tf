@@ -131,15 +131,15 @@ resource "coder_script" "claude_code" {
     touch "$HOME/.claude-code.log"
 
     # Clone the repo
-    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-    export GH_TOKEN="${var.github_token}"
-    export GIT_AUTHOR_NAME="${var.github_author_name}"
-    export GIT_AUTHOR_EMAIL="${var.github_author_email}"
-    export GIT_COMMITTER_NAME="${var.github_author_name}"
-    export GIT_COMMITTER_EMAIL="${var.github_author_email}"
+    export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o StrictHostKeyChecking=no"
+    #export GH_TOKEN="${var.github_token}"
+    #export GIT_AUTHOR_NAME="${var.github_author_name}"
+    #export GIT_AUTHOR_EMAIL="${var.github_author_email}"
+    #export GIT_COMMITTER_NAME="${var.github_author_name}"
+    #export GIT_COMMITTER_EMAIL="${var.github_author_email}"
     cd $HOME
     #gh repo clone ${var.github_owner}/${var.github_repo}
-    echo "GIT AUTHOR: $GIT_AUTHOR_NAME"
+    echo "GIT AUTHOR: $GIT_AUTHOR_EMAIL"
     git clone git@github.com:${var.github_owner}/${var.github_repo}.git
 
     # Set up playwright MCP
