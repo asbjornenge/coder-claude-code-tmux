@@ -145,6 +145,15 @@ resource "coder_script" "claude_code" {
     * There is most likey a .env file (typically dev.env) that sets env variables required by the docker services
     * Use playwright to very the site with it's new feature is working
     * Report back to the issue
+
+    # Screenshots and videos
+
+    * Use Playwright MCP to take screenshots and videos
+    * If it's a visual feature the manager wants screenshots or a video
+    * Add them in a screenshots dir in repo root
+    * After pushing you can reference the screenshot in a comment like this:
+      ![Screenshot](https://raw.githubusercontent.com/<owner>/<repo>/blob/<branch>/screenshots/screenshot.png)
+
     EOF
 
     # Start the claude tmux session
