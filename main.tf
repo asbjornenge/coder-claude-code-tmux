@@ -56,19 +56,31 @@ variable "experiment_report_tasks" {
 
 variable "github_repo" {
   type        = string
-  description = "GitHub repo"
+  description = "GitHub Repo"
   default     = ""
 }
 
 variable "github_owner" {
   type        = string
-  description = "GitHub repo"
+  description = "GitHub Owner"
   default     = ""
 }
 
 variable "github_token" {
   type        = string
-  description = "GitHub repo"
+  description = "GitHub Token"
+  default     = ""
+}
+
+variable "github_author_name" {
+  type        = string
+  description = "GitHub Author Name"
+  default     = ""
+}
+
+variable "github_author_email" {
+  type        = string
+  description = "GitHub Author Email"
   default     = ""
 }
 
@@ -121,9 +133,13 @@ resource "coder_script" "claude_code" {
     # Clone the repo
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     export GH_TOKEN="${var.github_token}"
+    export GIT_AUTHOR_NAME="${var.github_author_name}"
+    export GIT_AUTHOR_EMAIL="${var.github_author_email}"
+    export GIT_COMMITTER_NAME="${var.github_author_name}"
+    export GIT_COMMITTER_EMAIL="${var.github_author_email}"
     cd $HOME
     #gh repo clone ${var.github_owner}/${var.github_repo}
-    echo "GIT AUTOR: $GIT_AUTHOR_NAME"
+    echo "GIT AUTHOR: $GIT_AUTHOR_NAME"
     git clone git@github.com:${var.github_owner}/${var.github_repo}.git
 
     # Set up playwright MCP
