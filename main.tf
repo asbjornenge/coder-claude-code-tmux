@@ -122,7 +122,9 @@ resource "coder_script" "claude_code" {
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     export GH_TOKEN="${var.github_token}"
     cd $HOME
-    gh repo clone ${var.github_owner}/${var.github_repo}
+    #gh repo clone ${var.github_owner}/${var.github_repo}
+    echo "GIT AUTOR: $GIT_AUTHOR_NAME"
+    git clone git@github.com:${var.github_owner}/${var.github_repo}.git
 
     # Set up playwright MCP
     claude mcp add playwright -e DISPLAY=:99 -- playwright-mcp-server
