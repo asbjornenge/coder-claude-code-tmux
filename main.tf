@@ -118,16 +118,26 @@ resource "coder_script" "claude_code" {
 
     touch "$HOME/.claude-code.log"
 
-    # export LANG=en_US.UTF-8
-    # export LC_ALL=en_US.UTF-8
-
     # Clone the repo
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     export GH_TOKEN="${var.github_token}"
     cd $HOME
     gh repo clone ${var.github_owner}/${var.github_repo}
 
-    tmux new-session -d -s claude-code -c $HOME/${var.github_repo} "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
+    # Set up playwright MCP
+    claude mcp add playwright -e DISPLAY=:99 -- playwright-mcp-server
+
+    # Write custom claude.mc
+    cat > "$HOME/CLAUDE.md" <<EOF
+      # GitHub communication
+      
+      * Use the gh cli tool
+      * Prefix any issue comments with three robot emojis
+    EOF
+
+    # Start the claude tmux session
+    #tmux new-session -d -s claude-code -c $HOME/${var.github_repo} "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
+    tmux new-session -d -s claude-code "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
     EOT
   run_on_start = true
 }
@@ -231,6 +241,7 @@ resource "coder_script" "playwright_install" {
     set -e
 
     npx playwright install
+    npm install -g @executeautomation/playwright-mcp-server
 
     EOT
   run_on_start = true
