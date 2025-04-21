@@ -123,8 +123,9 @@ resource "coder_script" "claude_code" {
 
     # Clone the repo
     export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+    export GH_TOKEN="${var.github_token}"
     cd $HOME
-    git clone git@github.com:${var.github_owner}/${var.github_repo}.git
+    gh repo clone ${var.github_owner}/${var.github_repo}
 
     tmux new-session -d -s claude-code -c $HOME/${var.github_repo} "claude --dangerously-skip-permissions \"$CODER_MCP_CLAUDE_TASK_PROMPT\""
     EOT
