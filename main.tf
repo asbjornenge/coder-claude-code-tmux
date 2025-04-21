@@ -142,6 +142,7 @@ resource "coder_script" "claude_code" {
     * Add tests if you think it's useful and necessary
     * Make sure all tests are passing (typically app and api folders have npm test scripts)
     * Start services (typically docker compose)
+    * There is most likey a .env file (typically dev.env) that sets env variables required by the docker services
     * Use playwright to very the site with it's new feature is working
     * Report back to the issue
     EOF
