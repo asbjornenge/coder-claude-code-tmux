@@ -153,6 +153,7 @@ resource "coder_script" "claude_code" {
     * Add them in a screenshots dir in repo root
     * After pushing you can reference the screenshot in a comment like this:
       ![Screenshot](https://raw.githubusercontent.com/<owner>/<repo>/blob/<branch>/screenshots/screenshot.png)
+      ![Video](https://raw.githubusercontent.com/<owner>/<repo>/blob/<branch>/screenshots/video.webm)
 
     EOF
 
