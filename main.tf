@@ -262,7 +262,13 @@ resource "coder_script" "playwright_install" {
     set -e
 
     npx playwright install
-    npm install -g @executeautomation/playwright-mcp-server
+    #npm install -g @executeautomation/playwright-mcp-server
+    cd $HOME
+    git clone -b feature/video-recording https://github.com/asbjornenge/mcp-playwright.git
+    cd mcp-playwright
+    npm install
+    npm run build
+    npm link
 
     EOT
   run_on_start = true
