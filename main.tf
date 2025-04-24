@@ -151,9 +151,9 @@ resource "coder_script" "claude_code" {
     * Use Playwright MCP to take screenshots and videos
     * If it's a visual feature the manager wants screenshots or a video
     * Add them in a screenshots dir in repo root
-    * After pushing you can reference the screenshot in a comment like this:
-      ![Screenshot](https://raw.githubusercontent.com/<owner>/<repo>/blob/<branch>/screenshots/screenshot.png)
-      ![Video](https://raw.githubusercontent.com/<owner>/<repo>/blob/<branch>/screenshots/video.webm)
+    * After pushing you can reference the screenshot in a comment like this (markdown):
+      ![Screenshot](https://github.com/<owner>/<repo>/raw/refs/heads/<branch>/screenshots/home.png)
+      ![Video](https://github.com/<owner>/<repo>/raw/refs/heads/<branch>/screenshots/video.webm)
 
     EOF
 
